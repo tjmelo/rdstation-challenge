@@ -7,5 +7,6 @@ describe('Features Component', () => {
     render(<Features features={['Feature 1', 'Feature 2']} onFeatureChange={jest.fn()} />);
     const featureElement = screen.getByText(/Feature 1/i);
     expect(featureElement).toBeInTheDocument();
+    
   });
 });

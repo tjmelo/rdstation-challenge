@@ -44,11 +44,9 @@ describe('App Component', () => {
   it('should update the RecommendationList when the Form is submitted', () => {
     render(<App />);
 
-    // Simulate form submission
     const submitButton = screen.getByText('Submit Form');
     fireEvent.click(submitButton);
 
-    // Check if recommendations are displayed
     const recommendationItems = screen.getAllByRole('listitem');
     expect(recommendationItems).toHaveLength(2);
     expect(recommendationItems[0]).toHaveTextContent('RD Station CRM');
