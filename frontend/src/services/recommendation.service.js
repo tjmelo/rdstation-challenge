@@ -11,7 +11,8 @@ const getRecommendations = (
    * -----------------------------------------------------------
    * 1. Se o tipo de recomendação for "SingleProduct", retorne apenas um produto que tenha o maior número de matches.
    * 2. Se o tipo de recomendação for "MultipleProducts", retorne todos os produtos que tenham pelo menos um match.
-   * 3. Se o tipo de recomendação não for selecionado, retorne todos os produtos.
+   * 3. Se houver dois ou mais produtos com o mesmo número de matches, retorne o último produto.
+   * 4. Se o tipo de recomendação não for selecionado, retorne todos os produtos.
    */
 
   const { selectedPreferences, selectedFeatures, selectedRecommendationType } = formData;
@@ -22,26 +23,27 @@ const getRecommendations = (
     }, 0) + selectedFeatures.reduce((counter, feature) => {
       return product.features.includes(feature) ? counter + 1 : counter;
     }, 0);
-  }
-
-  const recommendedProducts = products.filter((product) => {
-
+  };
+  
+  const toGetListProducts = products.map(selectedReduce);
+  const toGetMaxProducts = Math.max(...toGetListProducts);
+  
+  const recommendedProducts = (() => {
     if (selectedRecommendationType === 'SingleProduct') {
-      const matchCounter = selectedReduce(product);
-
-      return matchCounter > 0 && matchCounter === Math.max(...products.map(product => {
-        return selectedReduce(product);
-      }));
+      const collectedProducts = products.filter((product) => selectedReduce(product) === toGetMaxProducts);
+  
+      // Se tiver mais que um produto com o mesmo número de matches, retorna o último
+      return collectedProducts.length > 1 ? [collectedProducts.at(-1)] : collectedProducts;
     } else {
-      return selectedPreferences.some((preference) =>
-        product.preferences.includes(preference))
-      || selectedFeatures.some((feature) =>
-        product.features.includes(feature)
+      return products.filter((product) =>
+        selectedPreferences.some((preference) => product.preferences.includes(preference)) ||
+        selectedFeatures.some((feature) => product.features.includes(feature))
       );
     }
   });
-
-  return recommendedProducts
+  
+  return recommendedProducts;
+  
 };
 
 export default { getRecommendations };
