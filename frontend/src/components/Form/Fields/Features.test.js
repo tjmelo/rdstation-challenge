@@ -2,8 +2,10 @@ import React from 'react';
 import { render, screen } from '@testing-library/react';
 import Features from './Features';
 
-test('renders Features component', () => {
-    render(<Features />);
-    const linkElement = screen.getByText(/features/i);
-    expect(linkElement).toBeInTheDocument();
+describe('Features Component', () => {
+  it('should render the Features component', () => {
+    render(<Features features={['Feature 1', 'Feature 2']} onFeatureChange={jest.fn()} />);
+    const featureElement = screen.getByText(/Feature 1/i);
+    expect(featureElement).toBeInTheDocument();
+  });
 });
